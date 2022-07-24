@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# 状态切片
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 1. 创建状态切片，并导出 reudcer 函数和 actions creator 函数（调用 createSlice）
 
-## Available Scripts
+```js
+// 1. 导入创建切片的函数
+import { createSlice } from "@reduxjs/toolkit";
 
-In the project directory, you can run:
+export const TODOS_FEATURE_KEY = "todos";
 
-### `npm start`
+// 2. 创建切片对象
+// creteSlice方法的返回值是一个对象
+// 这个reducer是一个函数
+// 一个应用中有可能会有很多状态切片，所以我们要给reducer一个别名防止冲突。
+// actions是一个对象，里面会存储一个到多个action creator函数
+// 当我们在reducers中创建了一个属性，那么插件会帮助我们自动创建一个同名的actioncreator函数，并保存在切片对象中。也就是说在组件中我们可以把addTodo传递给dispatch触发action.
+const { reudcer: TodosReducer, actions } = createSlice({
+  // name是状态切片的唯一标识，是个字符串；在好几个地方用到，所以定义成常量。
+  name: TODOS_FEATURE_KEY,
+  // initialState 是指初始状态
+  initialState: [],
+  // reducers的值是一个 普通对象，对象中的属性名是我们自己定义的，其实就是action.type 的值。
+  // 单纯的rudex或者redux-saga中，都是返回state；切片中而是直接操作state才行。
+  reducers: {
+    addTodo: (state, action) => {
+      state.push(action.payload);
+    },
+  },
+});
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+// 3. 从创建的切片中导出我们需要用到的对象。
+// 创建store的时候需要用到 reducer，所以我们需要导出 TodosReducer
+// 触发action是需要用到对应的action所以我们需要导出 action creator
+export const { addTodo } = actions;
+export default TodosReducer;
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+// 总结： 也就是只需要调用createSlice方法并配置好参数，方法就会自动返回reducer函数和action creator函数，不需要我们自己去实现了（其实配置中写的reducers也基本就是reducer函数了。）
+```
