@@ -88,7 +88,7 @@ const todos = useSelector((state)=>{ return state[TODOS_FEATURE_KEY] })
 
 ```
 
-# Action 预处理（允许我们在 reducer 接收到 action 对象之前，对 action 进行预处理。）
+# 5. Action 预处理（允许我们在 reducer 接收到 action 对象之前，对 action 进行预处理。）
 
 ```js
 const { reudcer: TodosReducer, actions } = createSlice({
@@ -105,6 +105,42 @@ const { reudcer: TodosReducer, actions } = createSlice({
       prepare: (todo) => {
         return { payload: { ...todo, title: "haha" } };
       },
+    },
+  },
+});
+```
+
+# 6. 工具集中 执行异步操作 （方式一）
+
+之前我们做异步操作，要借助 redux-thunk 或者 reudx-saga 这样的中间件。在 redux toolkit 中已经内置了 被进一步封装好的 thunk 中间件。
+
+## 1. 创建执行异步操作的 Action creator 函数。
+
+```js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export const loadTodos = createAsyncThunk(
+  // createAsyncThunk第一个参数是action.type对应的标识，是一个字符串。dispatch触发的是函数名loadTodos，而不是这里的字符串。
+  "todos/loadTodos",
+  // 第二个参数是个回调函数，当触发当前这个Action是会调用这个函数。
+  // 回调函数的第一个参数就是触发此action时传递的参数。
+  // 回调函数的第二个参数是个对象，里面存放着thunk的一些API (如 dispatch)
+  (payload, thunkAPI) => {
+    axios.get(payload).then((response) => {
+      thunkAPI.dispatch(setTodos(response.data));
+    });
+  }
+);
+```
+
+## 2. 创建接收异步操作结果的 Reducer
+
+```js
+const { reducer: TodosReducer, actions } = createSlice({
+  reducers: {
+    setTodos: (state, action) => {
+      action.payload.forEach((todo) => state.push(todo));
     },
   },
 });
