@@ -146,7 +146,7 @@ const { reducer: TodosReducer, actions } = createSlice({
 });
 ```
 
-# 6. 工具集中 执行异步操作 （方式二）
+# 7. 工具集中 执行异步操作 （方式二）
 
 ## 1. 创建执行异步操作的 Action creator 函数
 
@@ -172,5 +172,23 @@ createSlice({
       action.payload.forEach((todo) => state.push(todo));
     },
   },
+});
+```
+
+# 8. 工具集中 配置中间件
+
+需要先安装 reudx-logger 插件
+
+## 1. 配置 logger 中间件
+
+```js
+import logger from "redux-logger";
+
+export default configureStore({
+  reducer: {
+    [TODOS_FEATURE_KEY]: TodosReducer,
+  },
+  devTools: process.env.NODE_ENV !== "production",
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 ```
