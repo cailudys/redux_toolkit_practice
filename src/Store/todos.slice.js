@@ -22,11 +22,7 @@ const { reducer: TodosReducer, actions } = createSlice({
   initialState: todosAdapter.getInitialState(),
   reducers: {
     addTodo: {
-      reducer: (state, action) => {
-        // 向 state 中 添加一条数据，数据值是 action.payload
-        todosAdapter.addOne(state, action.payload);
-        // state.push(action.payload);
-      },
+      reducer: todosAdapter.addOne,
       prepare: (todo) => {
         console.log(todo);
         return {

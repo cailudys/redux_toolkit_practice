@@ -217,3 +217,16 @@ const todos = useSelector((state) => state[TODOS_FEATURE_KEY].entities);
 // 遍历这个对象的方法如下
 Object.values(todos).map(() => {});
 ```
+
+# 10. 简化书写实体适配器的代码
+
+```js
+reducer: (state, action) => {
+  // 向 state 中 添加一条数据，数据值是 action.payload
+  todosAdapter.addOne(state, action.payload);
+},
+// ===> 简化
+// 插件会自动把 state 和 action 给到 addOne这个函数；第二个方法会自动检查传递给它的第二个参数是否是action
+// 如果是action它会直接把action.payload 防止到第一个state 参数中。
+reducer: todosAdapter.addOne
+```
