@@ -87,3 +87,25 @@ const todos = useSelector((state)=>{ return state[TODOS_FEATURE_KEY] })
 <button onClick={() => dispatch(addTodo({ title: "测试任务" }))}>
 
 ```
+
+# Action 预处理（允许我们在 reducer 接收到 action 对象之前，对 action 进行预处理。）
+
+```js
+const { reudcer: TodosReducer, actions } = createSlice({
+  name: TODOS_FEATURE_KEY,
+  initialState: [],
+  reducers: {
+    // 结构稍微改动了
+    addTodo: {
+      reducer: (state, action) => {
+        state.push(action.payload);
+      },
+      // action 预处理，这里的todo是我们调用addTodo时传递的参数
+      // prepare方法要求返回一个对象，对象里要有payload属性。redux会使用这个payload属性去覆盖action原有的payload属性。
+      prepare: (todo) => {
+        return { payload: { ...todo, title: "haha" } };
+      },
+    },
+  },
+});
+```
