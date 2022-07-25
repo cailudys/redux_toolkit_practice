@@ -35,7 +35,7 @@ export default TodosReducer;
 // 总结： 也就是只需要调用createSlice方法并配置好参数，方法就会自动返回reducer函数和action creator函数，不需要我们自己去实现了（其实配置中写的reducers也基本就是reducer函数了。）
 ```
 
-# 1. 用工具集创建 store
+# 2. 用工具集创建 store
 
 ```js
 import { configureStore } from "@reduxjs/toolkit";
@@ -51,4 +51,39 @@ export default configureStore({
   // 只在非生产环境下启用devTools开发工具（没有工具集要使用这个工具需要复制代码，比较复杂）
   devTools: process.env.NODE_ENV !== "production",
 });
+```
+
+# 3. 用工具集配置 Provider
+
+```js
+import { Provider } from "react-redux";
+import store from "./Store";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+```
+
+# 4. 使用工具集触发 Action，获取状态。
+
+```js
+// 2.拿到dispatch之后我们还需要具体的action creator函数，来触发action，所有要导入addTodo 这个action creator函数【这个函数是自动生产的，我们只一开始只需要配置reducer】
+// 4.2 TODOS_FEATURE_KEY是用于确定拿哪个颗粒度更小的store数据用的。
+import { addTodo, TODOS_FEATURE_KEY } from "../../Store/index";
+// 1.不使用工具集的时候一般connect方法中能拿到dispatch；现在使用工具集用useDispatch来获取dispatch方法。
+// 4. 我们需要使用useSelector这钩子函数，把存储到store中的状态获取过来。
+import { useDispatch, useSelector } from "react-redux";
+
+const dispatch = useDispatch()
+// 4.1 useSelector函数接收一个回调函数，回调函数被调用时会传入完整的store，然后我们按需返回要用到的store。
+const todos = useSelector((state)=>{ return state[TODOS_FEATURE_KEY] })
+
+// 3. 触发action操作如下
+// 3.1 当我们调用 action creator函数传递的参数，被工具集自动传递到了，action.payload这个属性中了。
+// 3.2 也就是说在reducer函数当中我们可以通过action.payload来拿到这个对象。
+<button onClick={() => dispatch(addTodo({ title: "测试任务" }))}>
+
 ```
