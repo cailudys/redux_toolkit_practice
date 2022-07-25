@@ -1,6 +1,4 @@
-# 状态切片
-
-## 1. 创建状态切片，并导出 reudcer 函数和 actions creator 函数（调用 createSlice）
+# 1. 用工具集创建状态切片，并导出 reudcer 函数和 actions creator 函数（调用 createSlice）
 
 ```js
 // 1. 导入创建切片的函数
@@ -35,4 +33,22 @@ export const { addTodo } = actions;
 export default TodosReducer;
 
 // 总结： 也就是只需要调用createSlice方法并配置好参数，方法就会自动返回reducer函数和action creator函数，不需要我们自己去实现了（其实配置中写的reducers也基本就是reducer函数了。）
+```
+
+# 1. 用工具集创建 store
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+// 这里TodosRedcer 是整个todos切片里所有reudcer的合集。
+import TodosReducer, { TODOS_FEATURE_KEY } from "./todos.slice";
+
+export default configureStore({
+  // 使用工具集之前，我们会定义许多reducer 最终用combinereducer合并所有reducer，并传入createStore函数。
+  reducer: {
+    // 意思是reducer中存储着 一个名为“todos”的状态，状态是由TodosReducer返回的。
+    [TODOS_FEATURE_KEY]: TodosReducer,
+  },
+  // 只在非生产环境下启用devTools开发工具（没有工具集要使用这个工具需要复制代码，比较复杂）
+  devTools: process.env.NODE_ENV !== "production",
+});
 ```
