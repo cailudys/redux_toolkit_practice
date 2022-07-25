@@ -239,3 +239,41 @@ reducer: todosAdapter.addOne
 // 创建实体适配器的时候可以传一个配置对象，来确定唯一标识的属性值, data 是一个形参，指的是实体。
 const Adapter = createEntityAdapter({ selectId: (data) => data.id });
 ```
+
+# 11. 状态选择器 （提供从实体适配器中获取状态的快捷途径）
+
+是解决下面获取状态和使用状态，代码书写比较麻烦的问题。
+
+```js
+// 用了实体适配器之后，要如下获取数据，获取的数据是一个对象
+const todos = useSelector((state) => state[TODOS_FEATURE_KEY].entities);
+
+// 遍历这个对象的方法如下
+Object.values(todos).map(() => {});
+```
+
+## 创建状态选择器
+
+```js
+// createSelector函数能 返回给我们一个状态选择器，把这个状态选择器传入useSelector就能拿到选择的数据
+import { createSelector } from "@reduxjs/toolkit";
+
+// 实体适配器会给我们返回一些获取状态的方法
+const { selectAll } = todosAdapter.getSelectors();
+
+// 当前createSelector函数返回的是一个 数组
+export const selectTodosList = createSelector(
+  // 回调函数的 state 形参指的就是store里的整个状态
+  // 下面代码是从store里面拿到todos的状态
+  (state) => state[TODOS_FEATURE_KEY],
+  // 作用是从实体适配器中选择所有的实体，并放到一个数组中返回
+  selectAll
+);
+```
+
+## 使用状态选择器
+
+```js
+import { useSelector } from "react-redux";
+import { selectTodos } from "./todos.slice";
+```
