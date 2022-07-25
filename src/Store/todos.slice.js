@@ -1,5 +1,13 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+} from "@reduxjs/toolkit";
 import axios from "axios";
+
+const todosAdapter = createEntityAdapter();
+
+// console.log(todosAdapter.getInitialState());
 
 export const TODOS_FEATURE_KEY = "todos";
 
@@ -11,11 +19,13 @@ export const loadTodos = createAsyncThunk("todos/loadTodos", (payload) =>
 // 拿到reducer函数 和 action creator函数。
 const { reducer: TodosReducer, actions } = createSlice({
   name: "TODOS_FEATURE_KEY",
-  initialState: [],
+  initialState: todosAdapter.getInitialState(),
   reducers: {
     addTodo: {
       reducer: (state, action) => {
-        state.push(action.payload);
+        // 向 state 中 添加一条数据，数据值是 action.payload
+        todosAdapter.addOne(state, action.payload);
+        // state.push(action.payload);
       },
       prepare: (todo) => {
         console.log(todo);
@@ -25,17 +35,19 @@ const { reducer: TodosReducer, actions } = createSlice({
       },
     },
     setTodos: (state, action) => {
-      action.payload.forEach((todo) => state.push(todo));
+      todosAdapter.addMany(state, action.payload);
+      // action.payload.forEach((todo) => state.push(todo));
     },
   },
   extraReducers: {
     [loadTodos.pending]: (state, action) => {
       console.log("pending");
-      return state;
+      // return state;
     },
     [loadTodos.fulfilled]: (state, action) => {
       console.log("fulfilled");
-      action.payload.forEach((todo) => state.push(todo));
+      todosAdapter.addMany(state, action.payload);
+      // action.payload.forEach((todo) => state.push(todo));
     },
   },
 });

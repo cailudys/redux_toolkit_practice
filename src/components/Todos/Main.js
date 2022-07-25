@@ -8,7 +8,7 @@ import { useEffect } from "react";
 function Main() {
   const dispatch = useDispatch();
   // useSelector函数接收一个回调函数，回调函数被调用时会传入完整的store，然后我们按需返回要用到的store。
-  const todos = useSelector((state) => state[TODOS_FEATURE_KEY]);
+  const todos = useSelector((state) => state[TODOS_FEATURE_KEY].entities);
   // 组件挂载完成的时候调用获取任务列表的操作。
   useEffect(() => {
     dispatch(loadTodos("http://localhost:3001/todos"));
@@ -23,7 +23,7 @@ function Main() {
         添加任务
       </button>
       <ul className="todo-list">
-        {todos.map((todo) => (
+        {Object.values(todos).map((todo) => (
           <li className="completed" key={todo.id}>
             <div className="view">
               <input className="toggle" type="checkbox" />

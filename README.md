@@ -192,3 +192,28 @@ export default configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
 ```
+
+# 9. 配置实体适配器
+
+实体适配器：可以理解为一个容器， 是放入状态（数据）的容器。
+
+问：为什么要把状态放到实体适配器中呢？  
+答：因为实体适配器会给我们提供许多操作状态的方法，简化我们对状态的增删改查的操作。
+
+```js
+import { createEntityAdapter } from "@reduxjs/toolkit";
+
+const todosAdapter = createEntityAdapter();
+// 返回值是一个JavaScript对象  { ids:[], entities:{  } }
+todosAdapter.getInitialState();
+todosAdapter.addOne();
+todosAdapter.addMany();
+```
+
+```js
+// 用了实体适配器之后，要如下获取数据，获取的数据是一个对象
+const todos = useSelector((state) => state[TODOS_FEATURE_KEY].entities);
+
+// 遍历这个对象的方法如下
+Object.values(todos).map(() => {});
+```
