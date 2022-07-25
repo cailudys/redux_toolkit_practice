@@ -145,3 +145,32 @@ const { reducer: TodosReducer, actions } = createSlice({
   },
 });
 ```
+
+# 6. 工具集中 执行异步操作 （方式二）
+
+## 1. 创建执行异步操作的 Action creator 函数
+
+```js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+// 第一种方式是在loadTodos里再触发一个同步action，来改变状态
+// 当前方式二中是直接返回一个结构，让 另一个特殊的reducer去接收？
+export const loadTodos = createAsyncThunk("todos/loadTodos", (payload) => {
+  return axios.get(payload).then((response) => response.data);
+});
+```
+
+## 2. 创建接收异步操作结构(promise)的 Reducer
+
+```js
+createSlice({
+  // reducers中接收的是同步的action，extraReducers中接收的是异步action。
+  extraReducers: {
+    // 指的是当loadTodos异步anction执行完成的（fulfilled）时候，执行后面的函数
+    [loadTodos.fulfilled]: (state, action) => {
+      action.payload.forEach((todo) => state.push(todo));
+    },
+  },
+});
+```

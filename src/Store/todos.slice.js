@@ -4,13 +4,8 @@ import axios from "axios";
 export const TODOS_FEATURE_KEY = "todos";
 
 // 这是一个异步的 action creator 函数；要触发这个对应的anction，只需要 dispatch（此函数名）；
-export const loadTodos = createAsyncThunk(
-  "todos/loadTodos",
-  (payload, thunkAPI) => {
-    axios
-      .get(payload)
-      .then((response) => thunkAPI.dispatch(setTodos(response.data)));
-  }
+export const loadTodos = createAsyncThunk("todos/loadTodos", (payload) =>
+  axios.get(payload).then((response) => response.data)
 );
 
 // 拿到reducer函数 和 action creator函数。
@@ -20,7 +15,6 @@ const { reducer: TodosReducer, actions } = createSlice({
   reducers: {
     addTodo: {
       reducer: (state, action) => {
-        console.log(action);
         state.push(action.payload);
       },
       prepare: (todo) => {
@@ -31,6 +25,16 @@ const { reducer: TodosReducer, actions } = createSlice({
       },
     },
     setTodos: (state, action) => {
+      action.payload.forEach((todo) => state.push(todo));
+    },
+  },
+  extraReducers: {
+    [loadTodos.pending]: (state, action) => {
+      console.log("pending");
+      return state;
+    },
+    [loadTodos.fulfilled]: (state, action) => {
+      console.log("fulfilled");
       action.payload.forEach((todo) => state.push(todo));
     },
   },
