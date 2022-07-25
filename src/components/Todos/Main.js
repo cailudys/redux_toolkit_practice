@@ -24,7 +24,7 @@ function Main() {
       </button>
       <ul className="todo-list">
         {Object.values(todos).map((todo) => (
-          <li className="completed" key={todo.id}>
+          <li className="completed" key={todo.cid}>
             <div className="view">
               <input className="toggle" type="checkbox" />
               <label>{todo.title}</label>

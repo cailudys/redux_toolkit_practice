@@ -5,7 +5,9 @@ import {
 } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const todosAdapter = createEntityAdapter();
+const todosAdapter = createEntityAdapter({
+  selectId: (data) => data.cid,
+});
 
 // console.log(todosAdapter.getInitialState());
 
@@ -26,7 +28,7 @@ const { reducer: TodosReducer, actions } = createSlice({
       prepare: (todo) => {
         console.log(todo);
         return {
-          payload: { ...todo, id: Math.random() },
+          payload: { ...todo, cid: Math.random() },
         };
       },
     },

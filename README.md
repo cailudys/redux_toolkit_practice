@@ -230,3 +230,12 @@ reducer: (state, action) => {
 // 如果是action它会直接把action.payload 防止到第一个state 参数中。
 reducer: todosAdapter.addOne
 ```
+
+# 11. 将实体的其他属性作为实体的唯一标识
+
+实体适配器要求每一个实体(数据)，都要求每一个实体拥有 id 属性（默认要求，没有的话列表只渲染一个）作为唯一标识;如果实体中的唯一标识字段不叫做 id，则需要用 selectId 进行申明。
+
+```js
+// 创建实体适配器的时候可以传一个配置对象，来确定唯一标识的属性值, data 是一个形参，指的是实体。
+const Adapter = createEntityAdapter({ selectId: (data) => data.id });
+```
